@@ -21,13 +21,19 @@ import android.support.annotation.MainThread;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.nabuapp.root.nabuapp_alpha.pojo.MobileClient;
 import com.sec.enterprise.knox.license.KnoxEnterpriseLicenseManager;
 
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -49,6 +55,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 
+
+// TODO - Implement incoming command in json format
 public class MainActivity extends Activity {
 
     public static final String TAG = "MainAct";
@@ -159,9 +167,13 @@ public class MainActivity extends Activity {
 
 
     private void connectWebSocket() {
+        TelephonyManager telephonyManager = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
+        final String imei = telephonyManager.getDeviceId();
+
+
         URI uri;
         try {
-            uri = new URI("ws://192.168.0.123:1345");
+            uri = new URI("ws://192.168.1.4:1345");
         } catch (URISyntaxException e) {
             e.printStackTrace();
             return;
@@ -170,27 +182,48 @@ public class MainActivity extends Activity {
         mWebSocketClient = new WebSocketClient(uri) {
             @Override
             public void onOpen(ServerHandshake serverHandshake) {
+
+                String jsonObjectStr;
+
                 Log.i("Websocket", "Opened");
-                mWebSocketClient.send("Hello from " + Build.MANUFACTURER + " " + Build.MODEL);
+                MobileClient client = new MobileClient(imei,Build.MANUFACTURER + " " + Build.MODEL);
+
+                Gson gson = new GsonBuilder().create();
+                String json = gson.toJson(client);
+//                JSONObject connectedDevObj = new JSONObject(client);
+
+                mWebSocketClient.send("Hello from: " + json);
+
             }
 
             //supporting multiple message formats
 
             @Override
-            public void onMessage(String s) {
+            public void onMessage(String message) {
 
                     //TODO RECEIVE json message
-                final String message = s;
+
+                JSONObject  messageObj;
+                try {
+                    messageObj = new JSONObject(message);
+                    String incomeIMEI = (String) messageObj.get("deviceImei");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
                 runOnUiThread(new Runnable() {
+
+
                     @Override
                     public void run() {
                         boolean isVoiceRec = false;
                         boolean isCallRec = false;
                         boolean isGetLogs = false;
 
-                        Log.d("Incoming cmd", message);
+                        Log.d("Incoming cmd", messageObj);
 
                         int duration = 1;
+
+
 
                         if (message.equals(VOICEREC_ON)) {
                             if (isVoiceRec) {
