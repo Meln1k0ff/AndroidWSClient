@@ -3,9 +3,6 @@ package com.nabuapp.root.nabuapp_alpha;
 import android.Manifest;
 import android.app.Activity;
 import android.app.admin.DevicePolicyManager;
-import android.app.enterprise.EnterpriseDeviceManager;
-import android.app.enterprise.RestrictionPolicy;
-import android.app.enterprise.license.EnterpriseLicenseManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -13,46 +10,19 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.os.Build;
-import android.os.Environment;
-import android.os.Handler;
-import android.support.annotation.MainThread;
-import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.telephony.TelephonyManager;
 import android.util.Log;
-import android.widget.Toast;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.nabuapp.root.nabuapp_alpha.pojo.MobileClient;
-import com.sec.enterprise.knox.license.KnoxEnterpriseLicenseManager;
 
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 
 
@@ -90,9 +60,6 @@ public class MainActivity extends Activity {
 
     private DevicePolicyManager mDPM;
     private ComponentName mAdminName;
-
-    private EnterpriseDeviceManager mEnterpriseDeviceManager;
-    private RestrictionPolicy mRestrictionPolicy;
 
     public int REQUEST_ENABLE;
 
@@ -142,7 +109,7 @@ public class MainActivity extends Activity {
             return;
         }
 
-        //context = getBaseContext();
+        context = getApplicationContext();
         act = MainActivity.this;
         connectWebSocket();
 
@@ -173,7 +140,7 @@ public class MainActivity extends Activity {
 
         URI uri;
         try {
-            uri = new URI("ws://192.168.1.4:1345");
+            uri = new URI("ws://192.168.1.147:1345");
         } catch (URISyntaxException e) {
             e.printStackTrace();
             return;
@@ -186,30 +153,30 @@ public class MainActivity extends Activity {
                 String jsonObjectStr;
 
                 Log.i("Websocket", "Opened");
-                MobileClient client = new MobileClient(imei,Build.MANUFACTURER + " " + Build.MODEL);
-
-                Gson gson = new GsonBuilder().create();
-                String json = gson.toJson(client);
+//                MobileClient client = new MobileClient(imei,Build.MANUFACTURER + " " + Build.MODEL);
+//
+//                Gson gson = new GsonBuilder().create();
+//                String json = gson.toJson(client);
 //                JSONObject connectedDevObj = new JSONObject(client);
 
-                mWebSocketClient.send("Hello from: " + json);
-
+//                mWebSocketClient.send("Hello from: " + json);
+                mWebSocketClient.send("Hello from: "+Build.MANUFACTURER + " " + Build.MODEL);
             }
 
             //supporting multiple message formats
 
             @Override
-            public void onMessage(String message) {
+            public void onMessage(final String message) {
 
                     //TODO RECEIVE json message
 
                 JSONObject  messageObj;
-                try {
-                    messageObj = new JSONObject(message);
-                    String incomeIMEI = (String) messageObj.get("deviceImei");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+//                try {
+////                    messageObj = new JSONObject(message);
+////                    String incomeIMEI = (String) messageObj.get("deviceImei");
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
                 runOnUiThread(new Runnable() {
 
 
@@ -219,7 +186,7 @@ public class MainActivity extends Activity {
                         boolean isCallRec = false;
                         boolean isGetLogs = false;
 
-                        Log.d("Incoming cmd", messageObj);
+                        Log.d("Incoming cmd", message);
 
                         int duration = 1;
 
@@ -316,7 +283,7 @@ public class MainActivity extends Activity {
             }
 
         };
-
+        mWebSocketClient.connect();
     }
 
 

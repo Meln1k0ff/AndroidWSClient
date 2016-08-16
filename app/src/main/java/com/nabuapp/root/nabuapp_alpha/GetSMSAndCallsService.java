@@ -1,41 +1,19 @@
 package com.nabuapp.root.nabuapp_alpha;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.Service;
-import android.app.admin.DevicePolicyManager;
-import android.app.enterprise.DeviceInventory;
-import android.app.enterprise.EnterpriseDeviceManager;
-import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.IBinder;
 import android.provider.CallLog;
-import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.telephony.TelephonyManager;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Created by ROOT on 14.06.2016.
